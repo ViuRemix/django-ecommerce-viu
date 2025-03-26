@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Profile
 from .models import Address
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.exceptions import ValidationError
 
 
 class ProfileUpdateForm(forms.ModelForm):
@@ -38,3 +40,100 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['full_name', 'street_address', 'city', 'state', 'zip_code', 'country']
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nhập email của bạn'
+        })
+    )
+    
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize form field widgets and attributes
+        self.fields['username'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nhập tên đăng nhập'
+        })
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nhập mật khẩu'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Xác nhận mật khẩu'
+        })
+        
+        # Custom error messages in Vietnamese
+        self.fields['username'].error_messages.update({
+            'required': 'Vui lòng nhập tên đăng nhập',
+            'unique': 'Tên đăng nhập đã tồn tại'
+        })
+        self.fields['email'].error_messages.update({
+            'required': 'Vui lòng nhập email',
+            'invalid': 'Email không hợp lệ'
+        })
+        self.fields['password1'].error_messages.update({
+            'required': 'Vui lòng nhập mật khẩu'
+        })
+        self.fields['password2'].error_messages.update({
+            'required': 'Vui lòng xác nhận mật khẩu',
+            'password_mismatch': 'Hai mật khẩu không khớp'
+        })
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError('Email đã được sử dụng')
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nhập tên đăng nhập',
+            'autocomplete': 'username',
+        }),
+        error_messages={
+            'required': 'Vui lòng nhập tên đăng nhập',
+        }
+    )
+    password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nhập mật khẩu',
+            'autocomplete': 'current-password',
+        }),
+        error_messages={
+            'required': 'Vui lòng nhập mật khẩu',
+        }
+    )
+
+    error_messages = {
+        'invalid_login': 'Tên đăng nhập hoặc mật khẩu không chính xác',
+        'inactive': 'Tài khoản này đã bị vô hiệu hóa',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].error_messages.update({
+            'required': 'Vui lòng nhập tên đăng nhập',
+        })
+        self.fields['password'].error_messages.update({
+            'required': 'Vui lòng nhập mật khẩu',
+        })

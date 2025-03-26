@@ -1,0 +1,270 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Product Container */
+.product-container {
+    max-width: 1200px;
+    margin: 0px auto;
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.product-container:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Product Images */
+.product-images {
+    flex: 1;
+    text-align: center;
+}
+
+.product-images .main-image {
+    margin-bottom: 15px;
+}
+
+.product-images .product-img {
+    width: 100%;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.product-images .product-img:hover {
+    transform: scale(1.08);
+}
+
+.product-images .thumbnail-images {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.product-images .thumbnail {
+    width: 110px; /* Tăng kích thước hình thu nhỏ */
+    height: 110px; /* Tăng kích thước hình thu nhỏ */
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.product-images .thumbnail:hover {
+    border-color: #ff6600;
+    transform: scale(1.2); /* Phóng to khi hover */
+}
+
+/* Product Details */
+.product-details {
+    flex: 1;
+    padding: 20px;
+}
+
+.product-details h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 15px;
+}
+
+.product-details .product-code, .product-details .price {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.product-details .price {
+    font-weight: bold;
+    color: #ff6600;
+    font-size: 22px;
+}
+
+/* Size Options */
+.size-options {
+    margin: 20px 0;
+}
+
+.size-options .sizes {
+    display: flex;
+    gap: 12px;
+}
+
+.size-options .size-btn {
+    padding: 12px 24px;
+    border: 2px solid #ccc;
+    background-color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.size-options .size-btn:hover, .size-options .size-btn.active {
+    background-color: #ff6600;
+    color: #fff;
+    border-color: #ff6600;
+}
+
+.size-options .size-btn:focus {
+    outline: none;
+}
+
+/* css cho mô tả */
+.promo {
+    margin-top: 20px; /* Khoảng cách phía trên */
+    padding: 20px; /* Thêm padding để nội dung không dính sát vào viền */
+    background-color: #f9f9f9; /* Màu nền sáng cho khối mô tả sản phẩm */
+    border-radius: 8px; /* Bo góc cho phần mô tả */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng đổ bóng nhẹ */
+    width: 100%; /* Đặt độ rộng của phần mô tả chiếm 80% chiều rộng của phần chứa */
+    max-width: 1000px; /* Giới hạn độ rộng tối đa để không quá rộng */
+    margin-left: auto; /* Canh giữa theo chiều ngang */
+    margin-right: auto; /* Canh giữa theo chiều ngang */
+}
+
+.promo h2 {
+    font-size: 24px; /* Kích thước chữ cho tiêu đề */
+    font-weight: 600; /* Đậm tiêu đề */
+    color: #333; /* Màu chữ tiêu đề */
+    margin-bottom: 15px; /* Khoảng cách dưới tiêu đề */
+}
+
+.product-description {
+    white-space: pre-line; /* Đảm bảo văn bản xuống dòng khi có break line */
+    text-align: left; /* Căn trái văn bản */
+    font-size: 16px; /* Kích thước chữ cho nội dung mô tả */
+    color: #555; /* Màu chữ nội dung */
+    line-height: 1.6; /* Khoảng cách dòng */
+    margin: 0; /* Xóa khoảng cách mặc định */
+}
+
+
+/* Actions */
+.actions {
+    margin: 30px 0;
+    display: flex;
+    gap: 15px;
+}
+
+.actions .add-to-cart, .actions .buy-now {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.actions .add-to-cart {
+    background-color: #000;
+    color: #fff;
+}
+
+.actions .add-to-cart:hover {
+    background-color: #333;
+    transform: translateY(-3px);
+}
+
+.actions .buy-now {
+    background-color: #ff0000;
+    color: #fff;
+}
+
+.actions .buy-now:hover {
+    background-color: #cc0000;
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-container {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .product-details {
+        order: 1; /* Đảm bảo phần details hiển thị trước mô tả sản phẩm */
+    }
+
+    .promo {
+        order: 2; /* Mô tả sản phẩm sẽ ở sau */
+        margin-top: 20px; /* Thêm khoảng cách giữa product details và mô tả */
+    }
+
+    .product-details h1 {
+        font-size: 20px; /* Giảm kích thước chữ cho màn hình nhỏ */
+    }
+
+    .product-images .thumbnail-images {
+        flex-wrap: wrap;
+    }
+
+    .product-images .thumbnail {
+        width: 80px;
+        height: 80px;
+    }
+
+    .actions {
+        display: flex; 
+        justify-content: space-between; 
+        width: 100%; 
+        gap: 10px;
+    }
+
+    .actions .add-to-cart, .actions .buy-now {
+        width: 48%; 
+        padding: 12px 22px; 
+        font-size: 15px; 
+    }
+
+    .size-options .size-btn {
+        width: auto;
+        padding: 5px 20px;
+        margin-top: 10px;
+    }
+}
+
+.product-quantity {
+    background-color: #f9f9f9; /* Màu nền nhẹ */
+    padding: 15px; /* Khoảng cách giữa nội dung và viền */
+    border-radius: 8px; /* Bo góc nhẹ */
+    border: 1px solid #ddd; /* Viền nhẹ xung quanh */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    font-size: 16px; /* Kích thước chữ */
+    color: #333; /* Màu chữ chính */
+    margin-top: 20px; /* Khoảng cách trên */
+    display: flex; /* Đảm bảo chúng có thể hiển thị cùng nhau theo chiều ngang */
+    flex-direction: column; /* Chia nội dung theo chiều dọc */
+    gap: 10px; /* Khoảng cách giữa các dòng */
+}
+
+.product-quantity p {
+    margin: 0; /* Bỏ khoảng cách mặc định của p */
+    font-weight: bold; /* Làm cho văn bản đậm */
+}
+
+.product-quantity p:first-child {
+    color: #e74c3c; /* Màu đỏ cho thông tin "đã bán" */
+}
+
+.product-quantity p:last-child {
+    color: #2ecc71; /* Màu xanh lá cho thông tin "còn lại" */
+}
+

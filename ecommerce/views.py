@@ -13,8 +13,8 @@ from .forms import ProfileUpdateForm
 from .models import Address
 from .forms import AddressForm
 
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
+from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 def home(request):
     products = Product.objects.filter(is_active=True)
@@ -189,13 +189,14 @@ def about(request):
 # đăng ký
 def register(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Tự động đăng nhập sau khi đăng ký
-            return redirect('home')  # Chuyển về trang chủ sau khi đăng ký
+            login(request, user)
+            messages.success(request, "Đăng ký thành công!")
+            return redirect('home')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'app/register.html', {'form': form})
 
 # tìm kiếm
@@ -293,3 +294,17 @@ def delete_address(request, address_id):
         address.delete()
         return redirect('profile')
     return redirect('profile')
+
+def login_view(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'app/login.html', {'form': form})
