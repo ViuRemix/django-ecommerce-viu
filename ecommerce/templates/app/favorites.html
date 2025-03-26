@@ -1,0 +1,17 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="favorites-container">
+    <h2>Sản phẩm yêu thích</h2>
+    <div class="favorites-list">
+        {% for favorite in favorites %}
+            <div class="favorite-item">
+                <img src="{{ favorite.product.image.url }}" alt="{{ favorite.product.name }}">
+                <h3>{{ favorite.product.name }}</h3>
+                <p>{{ favorite.product.description|truncatechars:50 }}</p>
+                <p>Giá: {{ favorite.product.price }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

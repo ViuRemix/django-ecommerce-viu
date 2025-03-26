@@ -1,0 +1,143 @@
+/* styles.css */
+body {
+    opacity: 0;
+    animation: fadeIn 1s ease-in forwards;
+    background-image: url('/static/images/register.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Arial', sans-serif;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Giữ nội dung ở giữa theo cả chiều ngang và dọc */
+    width: 100%;
+
+}
+.login-container {
+    width: 90%; /* Chiều rộng tối đa 90% trên điện thoại */
+    max-width: 400px; /* Giới hạn chiều rộng tối đa */
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+    display: block; /* Đảm bảo label hiển thị trên một dòng riêng */
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px; /* Khoảng cách giữa các nút */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-outline-success, .btn-outline-secondary {
+    width: 100%; /* Nút chiếm toàn bộ chiều rộng trên điện thoại */
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 5px 0; /* Khoảng cách giữa các nút */
+}
+
+.btn-outline-success {
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-outline-secondary {
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+hr {
+    margin: 20px 0;
+    border: 0;
+    border-top: 1px solid #ddd;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 576px) {
+    .login-container {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .form-control {
+        font-size: 14px;
+    }
+
+    .btn-primary, .btn-outline-success, .btn-outline-secondary {
+        font-size: 14px;
+        padding: 8px;
+    }
+}

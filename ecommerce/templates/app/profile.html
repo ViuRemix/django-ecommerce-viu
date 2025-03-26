@@ -1,0 +1,135 @@
+{% extends "app/base.html" %}
+
+{% block content %}
+<div class="account-container">
+    <div class="account-sidebar">
+        <div class="profile-picture" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #ddd; margin: 10px auto;">
+            {% if user.profile.image %}
+                <img src="{{ user.profile.image.url }}" alt="{{ user.first_name }} {{ user.last_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+                <span class="profile-initials" style="font-size: 36px; font-weight: bold; color: white; background: #007bff; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                    {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                </span>
+            {% endif %}
+        </div>
+
+        <h2 class="account-name">{{ user.last_name }} {{ user.first_name }} </h2>
+        
+        <nav class="account-nav">
+            <ul>
+                <li><a href="#" data-target="account-info" class="active">Thông tin tài khoản</a></li>
+                <li><a href="#" data-target="order-history">Lịch sử đơn hàng</a></li>
+                <li><a href="#" data-target="vouchers">Mã ưu đãi</a></li>
+                <li><a href="#" data-target="address-book">Sổ địa chỉ</a></li>
+                <li><a href="#" data-target="membership-card">Thẻ thành viên</a></li>
+                <li><a href="{% url 'favorites' %}" data-target="favorites">Sản phẩm yêu thích</a></li>
+                <li><a href="#" data-target="recently-viewed">Sản phẩm đã xem gần đây</a></li>
+            </ul>
+        </nav>
+        <!-- Form đăng xuất -->
+        <form action="{% url 'logout' %}" method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Đăng xuất</button>
+        </form>
+    </div>
+
+    <div class="account-content">
+        <!-- Phần nội dung tương ứng -->
+        <div id="account-info" class="content-section active">
+            <h2>Thông tin tài khoản</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ profile_form.as_p }}
+                <button type="submit" class="update-btn">Cập Nhật Thông Tin</button>
+            </form>
+            <!-- Display form errors -->
+            {% if profile_form.errors %}
+                <div class="form-errors">
+                    {{ profile_form.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div id="order-history" class="content-section">
+            <h2>Lịch sử đơn hàng</h2>
+            <p>Danh sách các đơn hàng đã đặt.</p>
+            <!-- Thêm nội dung lịch sử đơn hàng ở đây -->
+        </div>
+
+        <div id="vouchers" class="content-section">
+            <h2>Mã ưu đãi</h2>
+            <p>Danh sách mã ưu đãi của bạn.</p>
+            <!-- Thêm nội dung mã ưu đãi ở đây -->
+        </div>
+         <!-- Địa chỉ -->
+        <div id="address-book" class="content-section">
+            <h2>Sổ địa chỉ</h2>
+            <p>Quản lý địa chỉ của bạn.</p>
+            <div id="address-list">
+                {% for address in addresses %}
+                <div class="address-item">
+                    <p>{{ address.full_name }}</p>
+                    <p>{{ address.street_address }}</p>
+                    <p>{{ address.city }}, {{ address.state }} {{ address.zip_code }}</p>
+                    <p>{{ address.country }}</p>
+                    <button class="edit-address-btn" data-id="{{ address.id }}">Sửa</button>
+                    <form method="post" action="{% url 'delete_address' address.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-address-btn">Xóa</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            <button id="add-address-btn">Thêm địa chỉ mới</button>
+            <form id="add-address-form" method="post" action="{% url 'add_address' %}" style="display: none;">
+                {% csrf_token %}
+                {{ address_form.as_p }}
+                <button type="submit">Lưu địa chỉ</button>
+            </form>
+            <form id="edit-address-form" method="post" action="" style="display: none;">
+                {% csrf_token %}
+                {{ address_form.as_p }}
+                <button type="submit">Cập nhật địa chỉ</button>
+            </form>
+        </div>
+
+        <div id="membership-card" class="content-section">
+            <h2>Thẻ thành viên</h2>
+            <p>Thông tin thẻ thành viên của bạn.</p>
+            <!-- Thêm nội dung thẻ thành viên ở đây -->
+        </div>
+
+        <div id="favorites" class="content-section">
+            <h2>Sản phẩm yêu thích</h2>
+            <p>Danh sách sản phẩm bạn yêu thích.</p>
+            <div class="favorites-list">
+                {% for favorite in favorites %}
+                    <div class="favorite-item">
+                        <img src="{{ favorite.product.image.url }}" alt="{{ favorite.product.name }}">
+                        <h3>{{ favorite.product.name }}</h3>
+                        <p>{{ favorite.product.description|truncatechars:50 }}</p>
+                        <p>Giá: {{ favorite.product.price }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="recently-viewed" class="content-section">
+            <h2 class="fw-bold">Sản phẩm đã xem gần đây</h2>
+            <div id="recently-viewed-list" class="row row-cols-2 row-cols-md-4 g-3 mt-4">
+                {% for item in recently_viewed %}
+                    <div class="col">
+                        <div class="card">
+                            <img src="{{ item.product.image.url }}" class="card-img-top" alt="{{ item.product.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.product.name }}</h5>
+                                <p class="card-text">{{ item.product.description|truncatechars:50 }}</p>
+                                <p class="card-text">Giá: {{ item.product.price }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

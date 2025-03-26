@@ -1,0 +1,107 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <!-- Phần carousel (nếu có) -->
+    <div id="carouselExampleAuto" class="carousel slide" data-bs-ride="carousel" data-bs-touch="false" data-bs-interval="5000">
+        <div class="carousel-inner">
+            {% for slide in slides %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.title }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1 class="text-white">{{ slide.title }}</h1>
+                        <h2 class="text-white">{{ slide.subtitle }}</h2>
+                        {% if slide.button_link %}
+                            <a href="{{ slide.button_link }}" class="btn btn-light btn-lg">{{ slide.button_text }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAuto" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAuto" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Phần hiển thị sản phẩm -->
+    <div class="category-nav mt-4 text-center">
+        <h3 class="fw-bold">HÀNG BÁN CHẠY</h3>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <button class="btn btn-outline-dark btn-rounded category-btn active">QUẦN ÁO</button>
+            <button class="btn btn-outline-dark btn-rounded category-btn">NÓN</button>
+            <button class="btn btn-outline-dark btn-rounded category-btn">GIÀY</button>
+            <button class="btn btn-outline-dark btn-rounded category-btn">TÚI</button>
+        </div>
+    
+        <div class="row row-cols-2 row-cols-md-4 g-3 mt-4">
+            {% for product in products %} 
+            <div class="col">
+                <a href="{% url 'product_detail' product.id %}" class="text-decoration-none product-link" 
+                   data-id="{{ product.id }}" 
+                   data-name="{{ product.name }}" 
+                   data-price="{{ product.price }}" 
+                   data-image="{% if product.image %}{{ product.image.url }}{% else %}/static/images/No_images.png{% endif %}">
+                    <div class="card shadow-sm border-0">
+                        <img src="{% if product.image %}{{ product.image.url }}{% else %}/static/images/No_images.png{% endif %}" 
+                        class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h6 class="product-card-title">{{ product.name }}</h6>
+                            <h5 class="text-danger fw-bold">{{ product.price }}đ</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>    
+</div>
+
+<!-- Thêm JavaScript để xử lý sự kiện click và lưu sản phẩm đã xem -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const productLinks = document.querySelectorAll('.product-link');
+
+    // Hàm thêm sản phẩm vào danh sách đã xem
+    function addToRecentlyViewed(product) {
+        let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
+
+        // Kiểm tra xem sản phẩm đã tồn tại trong danh sách chưa
+        const existingProductIndex = recentlyViewed.findIndex(p => p.id === product.id);
+        if (existingProductIndex !== -1) {
+            recentlyViewed.splice(existingProductIndex, 1);
+        }
+
+        // Thêm sản phẩm vào đầu danh sách
+        recentlyViewed.unshift(product);
+
+        // Giới hạn danh sách chỉ lưu tối đa 5 sản phẩm
+        if (recentlyViewed.length > 5) {
+            recentlyViewed = recentlyViewed.slice(0, 5);
+        }
+
+        // Lưu danh sách mới vào localStorage
+        localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    }
+
+    // Thêm sự kiện click vào từng sản phẩm
+    productLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            const product = {
+                id: this.getAttribute('data-id'),
+                name: this.getAttribute('data-name'),
+                price: this.getAttribute('data-price'),
+                image: this.getAttribute('data-image')
+            };
+
+            // Thêm sản phẩm vào danh sách đã xem
+            addToRecentlyViewed(product);
+        });
+    });
+});
+</script>
+{% endblock content %}

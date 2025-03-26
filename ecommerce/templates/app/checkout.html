@@ -1,0 +1,74 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="checkout-container">
+    <h1>Thanh toán</h1>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <p class="{{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <div class="order-summary">
+        <h2>Thông tin đơn hàng</h2>
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Kích thước</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Tổng</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td><img src="{{ item.image|default:'/static/images/No_images.png' }}" alt="{{ item.item.product.name }}" width="50"></td>
+                    <td>{{ item.item.product.name }}</td>
+                    <td>{{ item.item.size }}</td>
+                    <td>{{ item.item.quantity }}</td>
+                    <td>{{ item.item.product.price }}đ</td>
+                    <td>{{ item.total }}00đ</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="total-price">Tổng tiền: <strong>{{ total_price }}00đ</strong></p>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="shipping-info">
+            <h2>Thông tin giao hàng</h2>
+            <form method="POST" action="{% url 'process_checkout' %}">
+                {% csrf_token %}
+                <label for="name">Họ và tên:</label>
+                <input type="text" name="name" required>
+                <label for="phone">Số điện thoại:</label>
+                <input type="text" name="phone" required>
+                <label for="address">Địa chỉ nhận hàng:</label>
+                <textarea name="address" required></textarea>
+                <h2>Phương thức thanh toán</h2>
+                <label><input type="radio" name="payment" value="cod" checked> COD</label>
+                <label><input type="radio" name="payment" value="bank"> Chuyển khoản</label>
+                <button type="submit" class="checkout-btn">Xác nhận đặt hàng</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Bạn cần <a href="{% url 'login' %}">đăng nhập</a> để thanh toán.</p>
+    {% endif %}
+</div>
+
+<style>
+    .checkout-container { max-width: 800px; margin: auto; padding: 20px; }
+    .order-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .order-table th, .order-table td { padding: 10px; border-bottom: 1px solid #ddd; }
+    .total-price { text-align: right; font-size: 1.2em; margin-bottom: 20px; }
+    .shipping-info { margin-top: 20px; }
+    .checkout-btn { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+</style>
+
+{% endblock content %}

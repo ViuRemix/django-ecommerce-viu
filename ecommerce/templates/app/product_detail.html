@@ -1,0 +1,200 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="product-container">
+    <div class="product-images">
+        <div class="main-image">
+            <img id="main-image" src="{% if product.image %}{{ product.image.url }}{% else %}{% static 'images/No_images.png' %}{% endif %}" alt="{{ product.name }}" class="product-img">
+        </div>
+        <div class="thumbnail-images">
+            {% for img in product.product_images.all %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}" class="thumbnail" onclick="changeImage('{{ img.image.url }}')">
+            {% empty %}
+                <img src="{% static 'images/No_images.png' %}" alt="No images available" class="thumbnail">
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="product-details">
+        <h1>{{ product.name }}</h1>
+        <p class="price">{{ product.price }}đ</p>
+
+        <div class="size-options">
+            <label for="size">Chọn kích thước:</label>
+            <div class="sizes">
+                <button class="size-btn">XS</button>
+                <button class="size-btn">S</button>
+                <button class="size-btn active">M</button>
+                <button class="size-btn">L</button>
+                <button class="size-btn">XL</button>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="add-to-cart" data-product-id="{{ product.id }}">THÊM VÀO GIỎ</button>
+            <button class="buy-now" onclick="buyNow('{{ product.id }}')">MUA NGAY</button>
+            <button class="add-to-favorites" data-product-id="{{ product.id }}">YÊU THÍCH</button>
+        </div>
+        <div class="product-quantity">
+            <p>Đã bán: {{ product.sold_quantity }}</p>
+            <p>Còn lại: {{ product.stock }}</p>
+        </div>
+
+        <div class="promo">
+            <h2>Mô tả sản phẩm</h2>
+            <p class="product-description">{{ product.description }}</p>
+        </div>
+    </div>
+</div>
+
+<div id="cart-message" class="cart-message hidden">
+    <p id="cart-message-text"></p>
+</div>
+
+<style>
+    .cart-message {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    .cart-message.show {
+        display: block;
+        opacity: 1;
+    }
+    .size-btn { padding: 5px 10px; margin: 5px; }
+    .size-btn.active { background-color: #4CAF50; color: white; }
+    .actions button { padding: 10px 20px; margin: 5px; }
+    .buy-now { background-color: #ff4444; color: white; border: none; }
+    .add-to-favorites { background-color: #ffcc00; color: white; border: none; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function changeImage(imageUrl) {
+        document.getElementById('main-image').src = imageUrl;
+    }
+
+    const sizeButtons = document.querySelectorAll('.size-btn');
+    const addToCartButton = document.querySelector('.add-to-cart');
+    const addToFavoritesButton = document.querySelector('.add-to-favorites');
+    let selectedSize = 'M';
+
+    sizeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            sizeButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedSize = button.textContent;
+        });
+    });
+
+    function showCartMessage(message) {
+        const messageBox = document.getElementById('cart-message');
+        const messageText = document.getElementById('cart-message-text');
+        messageText.textContent = message;
+        messageBox.classList.add('show');
+        setTimeout(() => messageBox.classList.remove('show'), 3000);
+    }
+
+    if (addToCartButton) {
+        addToCartButton.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            fetch(`{% url 'add_to_cart' 0 %}`.replace('0', productId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `size=${encodeURIComponent(selectedSize)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount) {
+                        cartCount.textContent = data.cart_items_count;
+                        cartCount.style.display = data.cart_items_count > 0 ? 'inline' : 'none';
+                    }
+                    showCartMessage(data.message);
+                } else {
+                    showCartMessage(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showCartMessage('Lỗi khi thêm vào giỏ hàng!');
+            });
+        });
+    }
+
+    if (addToFavoritesButton) {
+        addToFavoritesButton.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            fetch(`{% url 'add_to_favorites' 0 %}`.replace('0', productId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showCartMessage(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showCartMessage('Lỗi khi thêm vào danh sách yêu thích!');
+            });
+        });
+    }
+
+    window.buyNow = function(productId) {
+        fetch(`{% url 'add_to_cart' 0 %}`.replace('0', productId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: `size=${encodeURIComponent(selectedSize)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{% url 'checkout' %}";
+            } else {
+                showCartMessage(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showCartMessage('Lỗi khi xử lý mua ngay!');
+        });
+    };
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+
+{% endblock content %}

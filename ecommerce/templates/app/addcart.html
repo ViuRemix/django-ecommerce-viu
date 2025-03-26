@@ -1,0 +1,75 @@
+<!-- app/templates/app/addcart.html -->
+{% extends "app/base.html" %}
+{% load static %}
+{% block content %}
+<div class="cart-container">
+    <h1>Giỏ hàng của bạn</h1>
+    {% if cart_items %}
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Kích thước</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <img src="{% if item.item.product.image %}{{ item.item.product.image.url }}{% else %}{% static 'images/No_images.png' %}{% endif %}" 
+                        alt="{{ item.item.product.name }}" 
+                        class="cart-item-img" 
+                        style="width: 100px; height: auto;">
+                        {{ item.item.product.name }}
+                    </td>
+                    <td>
+                        <form method="POST" action="{% url 'update_cart' item.item.id %}">
+                            {% csrf_token %}
+                            <select name="size" class="size-select">
+                                <option value="XS" {% if item.item.size == "XS" %}selected{% endif %}>XS</option>
+                                <option value="S" {% if item.item.size == "S" %}selected{% endif %}>S</option>
+                                <option value="M" {% if item.item.size == "M" %}selected{% endif %}>M</option>
+                                <option value="L" {% if item.item.size == "L" %}selected{% endif %}>L</option>
+                                <option value="XL" {% if item.item.size == "XL" %}selected{% endif %}>XL</option>
+                            </select>
+                    </td>
+                    <td>{{ item.item.product.price }}đ</td>
+                    <td>
+                        <input type="number" name="quantity" value="{{ item.item.quantity }}" min="1" max="{{ item.item.product.stock }}">
+                    </td>
+                    <td>{{ item.total }}00đ</td>
+                    <td>
+                        <button type="submit">Cập nhật</button>
+                        <a href="{% url 'remove_from_cart' item.item.id %}" class="remove-btn">Xóa</a>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="cart-total">
+            <p>Tổng tiền: <span>{{ total_price }}00đ</span></p>
+            <a href="{% url 'checkout' %}" class="checkout-btn">Thanh toán</a>
+        </div>
+    {% else %}
+        <p>Giỏ hàng của bạn đang trống.</p>
+        <a href="{% url 'san_pham' %}">Tiếp tục mua sắm</a>
+    {% endif %}
+</div>
+
+<style>
+    .cart-container { max-width: 1200px; margin: 20px auto; padding: 20px; }
+    .cart-table { width: 100%; border-collapse: collapse; }
+    .cart-table th, .cart-table td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    .cart-item-img { width: 50px; height: 50px; vertical-align: middle; margin-right: 10px; }
+    .remove-btn { color: red; text-decoration: none; }
+    .cart-total { margin-top: 20px; text-align: right; }
+    .checkout-btn { background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+    .size-select { padding: 5px; }
+</style>
+{% endblock content %}
