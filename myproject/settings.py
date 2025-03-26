@@ -77,17 +77,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "my_ecommerce", 
-        "USER": "root",
-        "PASSWORD": "rmahviu@852005",
-        "HOST": "localhost",
-        'OPTIONS': {
-            'charset': 'utf8mb4',  # Thêm dòng này
-            'use_unicode': True,
-        },
-    }
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
 }
 
 # Password validation
