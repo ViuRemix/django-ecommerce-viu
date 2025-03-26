@@ -1,0 +1,4 @@
+Django>=4.0
+gunicorn
+mysqlclient  # Hoặc thay bằng PyMySQL nếu cần
+whitenoise  # Dùng để xử lý static files
