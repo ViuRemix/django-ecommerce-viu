@@ -91,7 +91,7 @@ DATABASES = {
         "PASSWORD": "rmahviu@852005",
         "HOST": "localhost",
         'OPTIONS': {
-            'charset': 'utf8mb4',  # Thêm dòng này
+            'charset': 'utf8mb4',  # Thêm dòng này đi
             'use_unicode': True,
         },
     }
