@@ -91,7 +91,7 @@ DATABASES = {
         "PASSWORD": "rmahviu@852005",
         "HOST": "localhost",
         'OPTIONS': {
-            'charset': 'utf8mb4',  # Thêm dòng này đi
+            'charset': 'utf8mb4', # Đảm bảo sử dụng utf8mb4 cho MySQL
             'use_unicode': True,
         },
     }
