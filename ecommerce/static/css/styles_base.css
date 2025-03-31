@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -236,6 +237,8 @@ body {
         border-top: 1px solid #e0e0e0;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
+        font-size: 14px; /* Giảm kích thước chữ */
+        padding: 10px 0; /* Giảm padding */
     }
 
     .nav-menu.active {
@@ -245,6 +248,10 @@ body {
     .nav-menu li {
         margin: 0;
         
+    }
+
+    .nav-menu li a {
+        padding: 8px 10px; /* Giảm padding cho các liên kết */
     }
 
     .nav-icons {
@@ -293,8 +300,16 @@ body {
         font-size: 20px; /* Giữ nguyên kích thước icon trên mobile */
     }
   
-}
+    .nav-menu {
+        font-size: 12px; /* Giảm kích thước chữ thêm nữa */
+        padding: 5px 0; /* Giảm padding thêm nữa */
+    }
 
+    .nav-menu li a {
+        padding: 5px 8px; /* Giảm padding cho các liên kết thêm nữa */
+        font-size: 12px; /* Giảm kích thước chữ của liên kết */
+    }
+}
 
 /* css thông báo */
 
@@ -404,3 +419,4 @@ body {
     font-size: 18px;
     font-weight: bold;
 }
+

@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from .views import favorites_view, add_to_favorites
+from .views import category_detail
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -30,4 +31,6 @@ urlpatterns = [
     path('add_address/', views.add_address, name='add_address'),
     path('edit_address/<int:address_id>/', views.edit_address, name='edit_address'),
     path('delete_address/<int:address_id>/', views.delete_address, name='delete_address'),
+    # categories
+    path('categories/<int:category_id>/', category_detail, name='category_detail'),
 ]

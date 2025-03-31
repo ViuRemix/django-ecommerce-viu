@@ -1,0 +1,60 @@
+.footer-social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.footer-social-icon:hover {
+    transform: scale(1.1);
+    background-color: #1d4ed8; /* Darker blue on hover */
+}
+
+.footer-social-icon i {
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.footer-social-icon:hover i {
+    color: #f3f4f6; /* Light gray on hover */
+}
+
+.grid img {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+}
+
+.grid img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.class-Hotline {
+    display: flex;
+}
+.flex-hotline {
+    padding-right: 20px;
+}
+#newsletter-email {
+    border: 1px solid #ddd; /* Thêm đường viền */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
+    transition: border-color 0.3s ease; /* Hiệu ứng chuyển tiếp khi focus */
+  }
+  
+  #newsletter-email:focus {
+    outline: none; /* Loại bỏ đường viền mặc định khi focus */
+    border-color: #007bff; /* Thay đổi màu đường viền khi focus */
+  }
+
+  #newsletter-button-container button {
+    font-weight: 600; /* In đậm chữ */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển tiếp */
+  }
+  
+  #newsletter-button-container button:hover {
+    background-color: #333; /* Thay đổi màu nền khi hover */
+    transform: translateY(-2px); /* Hiệu ứng nâng nút lên khi hover */
+  }
+  
+  #newsletter-button-container button:active {
+    transform: translateY(0); /* Đặt lại vị trí khi nhấn */
+  }

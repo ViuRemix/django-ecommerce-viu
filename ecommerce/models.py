@@ -1,29 +1,69 @@
 # app/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 class Category(models.Model):
+    id = models.BigAutoField(primary_key=True)  # ID tự động tăng
     name = models.CharField(max_length=255, unique=True)
+    image = models.ImageField(upload_to='categories/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)  # Thêm dòng này
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
 class Product(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=3)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    description = models.TextField(blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    image = models.ImageField(upload_to='products/')
     sold_quantity = models.PositiveIntegerField(default=0)
     stock = models.PositiveIntegerField(default=0)
-    image = models.ImageField(null=True, blank=True)
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    is_featured = models.BooleanField(default=False)
+    is_new = models.BooleanField(default=False)  # Renamed from is_best_seller
+    is_sale = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)  # Add this field to indicate active status
     created_at = models.DateTimeField(auto_now_add=True)
-    is_best_seller = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    product_images = models.ManyToManyField('ProductImage', related_name='products', blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
+    @property
+    def display_price(self):
+        """Hiển thị giá bán hiện tại với định dạng tiền tệ Việt Nam."""
+        if self.sale_price:
+            # Định dạng giá khuyến mãi với dấu "," phân cách hàng nghìn
+            return f"{self.sale_price:,.0f}.000₫"
+        # Định dạng giá gốc với dấu "," phân cách hàng nghìn
+        return f"{self.price:,.0f}.000₫"
+
+    @property
+    def original_price(self):
+        """Hiển thị giá gốc nếu có sale, với định dạng tiền tệ."""
+        if self.sale_price:
+            return f"{self.price:,.0f}.000₫"
+        return None
+
+
+# Model để lưu trữ sản phẩm nổi bật
+class FeaturedProduct(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    is_featured = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Featured: {self.product.name}"
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='product_images/')
@@ -32,14 +72,16 @@ class ProductImage(models.Model):
         return f"Image for {self.product.name}"
 
 class Slide(models.Model):
-    title = models.CharField(max_length=255, verbose_name="Tiêu đề")
-    subtitle = models.CharField(max_length=255, blank=True, null=True, verbose_name="Phụ đề")
-    image = models.ImageField(upload_to='slides/', verbose_name="Hình ảnh")
-    button_text = models.CharField(max_length=50, default="MUA NGAY", verbose_name="Nút CTA")
-    button_link = models.URLField(blank=True, null=True, verbose_name="Liên kết nút")
+    title = models.CharField(max_length=255)
+    subtitle = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='slides/')
+    cta = models.CharField(max_length=100, blank=True, null=True)
+    cta_link = models.URLField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)  # Thêm dòng này
 
     def __str__(self):
         return self.title
+
 
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -50,7 +92,7 @@ class CartItem(models.Model):
     
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
-# trang cá nhân
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     dob = models.DateField(null=True, blank=True)
@@ -60,7 +102,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - Profile"
-# yêu thích
+
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -68,7 +110,7 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
-# sản phẩm xem
+
 class RecentlyViewedProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

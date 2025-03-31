@@ -1,0 +1,182 @@
+{% load static %}
+
+{% block content_footer %}
+
+<footer class="w-full bg-black text-white">
+  <!-- Newsletter Section -->
+  <div class="w-full bg-gray-200 py-4">
+    <div class="container mx-auto px-4">
+      <form id="newsletter-form" class="flex flex-col md:flex-row items-center gap-4">
+        <div class="flex items-center gap-2 text-black">
+          <i class="fas fa-envelope-open-text" style="color: #333; font-size: 3.5em; padding-right: 20px; "></i>
+
+          <div>
+            <h3 class="font-bold text-lg">Đăng ký nhận bản tin</h3>
+            <p class="text-sm">Đừng bỏ lỡ hàng ngàn sản phẩm và các chương trình siêu hấp dẫn</p>
+          </div>
+        </div>
+        <div class="flex flex-1 w-full md:w-auto gap-2">
+          <input
+            type="email"
+            id="newsletter-email"
+            placeholder="Địa chỉ email của bạn"
+            class="flex-1 bg-white text-black px-3 py-2 rounded"
+            required
+          />
+          <div id="newsletter-button-container">
+            <button type="submit" class="bg-black text-white hover:bg-gray-800 px-4 py-2 rounded">
+              ĐĂNG KÝ
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Footer Content -->
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Company Info -->
+      <div class="space-y-4">
+        <h2 class="text-4xl font-bold hover:scale-105 transition-transform">ACFC</h2>
+        <p class="text-sm text-gray-300">
+          Nhà phân phối chính hãng các thương hiệu thời trang quốc tế hàng đầu Việt Nam.
+          <span class="text-blue-400 ml-1 cursor-pointer hover:text-blue-500">(Xem thêm)</span>
+        </p>
+        <div class="w-16 h-1 bg-white"></div>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-start gap-2 hover:translate-x-1 transition-transform">
+            <i class="fas fa-map-marker-alt text-white text-lg"></i>
+            <p>
+              84 Phan Trọng Tuệ, Hoà Cường Nam, Hải Châu, Đà Nẵng, Việt Nam.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 hover:translate-x-1 transition-transform">
+            <i class="fas fa-fax text-white text-lg"></i>
+            <p>Fax: + 84 (28) 3825 6523</p>
+          </div>
+          <div class="flex items-center gap-2 font-bold hover:translate-x-1 transition-transform">
+           <i class="fas fa-phone text-white text-lg"></i>
+            <p>03676 04684 (9:00-22:00)</p>
+          </div>
+        </div>
+        
+      </div>
+
+      <!-- About ACFC -->
+      
+        <div class="space-y-4">
+            <h3 class="text-xl font-bold border-b border-gray-700 pb-2">Về ACFC</h3>
+            <ul class="space-y-2">
+            {% for item in about_items %}
+                <li class="cursor-pointer hover:translate-x-2 hover:text-blue-400 transition-all"><a href="{{ item.url }}">{{ item.name }}</a></li>
+            {% empty %}
+                <li>Không có dữ liệu để hiển thị.</li>
+            {% endfor %}
+            </ul>
+
+            <h3 class="text-xl font-bold border-b border-gray-700 pb-2 pt-6">Hotline</h3>
+            <div class="bg-gray-800 p-4 rounded-md hover:scale-102 transition-transform class-Hotline">
+                <div class="flex-hotline">
+                    <i class="fas fa-phone text-white text-lg"></i>
+                </div>
+                <div>
+                <p class="text-sm text-gray-300">Giải đáp thắc mắc và khiếu nại</p>
+                <p class="font-bold">03676 04684 (9:00 - 22:00)</p>
+                </div>
+                
+            </div>
+        </div>
+
+      <!-- Customer Support -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-bold border-b border-gray-700 pb-2">Hỗ trợ khách hàng</h3>
+        <ul class="space-y-2">
+            {% for item in support_items %}
+                <li class="cursor-pointer hover:translate-x-2 hover:text-blue-400 transition-all"><a href="{{ item.url }}">{{ item.name }}</a></li>
+            {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Connect with ACFC -->
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xl font-bold border-b border-gray-700 pb-2">Kết nối với ACFC</h3>
+            <div class="flex gap-4 mt-4">
+                {% for icon in social_icons %}
+                <a href="{{ icon.url }}" target="_blank" class="footer-social-icon bg-blue-600 p-2 rounded-md cursor-pointer">
+                    <i data-lucide="{{ icon.name }}" class="h-6 w-6"></i>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+       <div>
+            <h3 style="font-size: 20px; font-weight: bold; border-bottom: 2px solid #4a4a4a; padding-bottom: 8px;"  class="text-xl font-bold border-b border-gray-700 pb-2">
+                Chấp nhận thanh toán.
+            </h3>
+            <div class="grid grid-cols-3 gap-2 mt-4" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px;">
+                <img src="{% static 'images/visa.png' %}" alt="Visa" style="width: 50px; height: 50px;">
+                <img src="{% static 'images/mastercard.png' %}" alt="MasterCard" style="width: 50px; height: 50px;">
+                <img src="{% static 'images/jcb.png' %}" alt="JCB" style="width: 50px; height: 50px;">
+                <img src="{% static 'images/cod.png' %}" alt="COD" style="width: 50px; height: 50px;">
+                <img src="{% static 'images/atm.png' %}" alt="ATM" style="width: 50px; height: 50px;">
+                <img src="{% static 'images/momo.png' %}" alt="Momo" style="width: 50px; height: 50px;">
+            </div>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-bold border-b border-gray-700 pb-2">Đối Tác Vận Chuyển</h3>
+          <div class="mt-4">
+            <div class="bg-yellow-500 text-black font-bold p-2 rounded-md inline-block hover:scale-105 transition-transform">
+              NHẤT TIN express
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-bold border-b border-gray-700 pb-2">Tải App RV</h3>
+          <div class="flex gap-4 mt-4">
+            <div class="bg-black border border-white p-2 rounded-md cursor-pointer hover:scale-105 transition-transform">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-white rounded-full"></div>
+                <div>
+                    <a href="https://play.google.com/store" target="_blank" class="block text-center">
+                        <p class="text-xs">GET IT ON</p>
+                        <p class="font-bold">Google Play</p>
+                    </a>
+                </div>
+              </div>
+            </div>
+            <div class="bg-black border border-white p-2 rounded-md cursor-pointer hover:scale-105 transition-transform">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-white rounded-full"></div>
+                <div>
+                  <p class="text-xs">Download on the</p>
+                  <p class="font-bold">App Store</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="border-t border-gray-800 py-6">
+    <div class="container mx-auto px-4 text-center text-sm text-gray-400">
+      <p>© RV 2025 viu-shop - Công Ty TNHH Thời Trang & Mỹ Phẩm Âu Châu.</p>
+      <p class="mt-2">
+        Mọi quyền sở hữu thuộc về Công Ty TNHH Thời Trang Viu. Địa chỉ: 84 Phan Trọng Tuệ, Hoà Cường Nam, Hải Châu, Đà Nẵng, Việt Nam. Liên hệ: viu106018@donga.edu.vn.
+      </p>
+    </div>
+  </div>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50 opacity-0 scale-0 hover:scale-110 hover:bg-blue-500 transition-all">
+    <img src="{% static 'icons/arrow-up.svg' %}" alt="Up" class="h-6 w-6" />
+  </button>
+</footer>
+
+{% endblock content_footer %}

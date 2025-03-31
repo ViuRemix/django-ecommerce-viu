@@ -17,9 +17,15 @@
     </div>
 
     <div class="product-details">
-        <h1>{{ product.name }}</h1>
-        <p class="price">{{ product.price }}đ</p>
-
+       <h1 class="text-start">{{ product.name }}</h1>
+        <div class="flex gap-2">
+            {% if product.sale_price %}
+                <span class="text-red-500 font-medium">{{ product.display_price }}</span>
+                <span class="text-gray-400 line-through">{{ product.original_price }}</span>
+            {% else %}
+                <span class="font-medium">{{ product.display_price }}</span>
+            {% endif %}
+        </div>
         <div class="size-options">
             <label for="size">Chọn kích thước:</label>
             <div class="sizes">

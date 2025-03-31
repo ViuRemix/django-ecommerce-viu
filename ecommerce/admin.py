@@ -1,38 +1,44 @@
 from django.contrib import admin
-from .models import Category, Product, ProductImage, Slide, CartItem
+from .models import Category, Product, FeaturedProduct, ProductImage, Slide, CartItem
 
-# Inline để hiển thị các ảnh sản phẩm liên quan đến Product trong Django Admin
 class ProductImageInline(admin.TabularInline):
-    model = Product.product_images.through  # Liên kết với mối quan hệ ManyToMany
-    extra = 1  # Số lượng ô nhập thêm ảnh mặc định
+    model = ProductImage
+    extra = 1
 
-# Admin cho Product
+# Đăng ký model Product
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline]  # Hiển thị hình ảnh của sản phẩm trong tab sản phẩm
-    list_display = ('name', 'price', 'stock', 'is_active', 'created_at')  # Các cột hiển thị
-    list_filter = ('category', 'is_active', 'is_best_seller')  # Lọc
-    search_fields = ('name', 'description')  # Tìm kiếm
-    date_hierarchy = 'created_at'  # Phân cấp theo thời gian
+    inlines = [ProductImageInline]  # Thêm Inline cho ProductImage
+    list_display = ('name', 'category', 'price', 'sale_price', 'is_featured', 'sold_quantity', 'stock','is_new', 'is_sale', 'is_active', 'created_at', 'updated_at', )  # Hiển thị các trường trong danh sách
+    list_filter = ('category', 'is_featured', 'is_new', 'is_sale', 'is_active')  # Lọc theo các trường này
+    search_fields = ('name', 'description')  # Cho phép tìm kiếm theo tên và mô tả
+    prepopulated_fields = {'slug': ('name',)}  # Tự động tạo slug từ tên sản phẩm
+    date_hierarchy = 'created_at'  # Cho phép phân loại theo ngày
 
-# Admin cho Category
+# Avoid registering the model multiple times
+if not admin.site.is_registered(Product):
+    admin.site.register(Product, ProductAdmin)
+
+# Đăng ký model FeaturedProduct
+class FeaturedProductAdmin(admin.ModelAdmin):
+    list_display = ('product', 'is_featured')
+    list_filter = ('is_featured',)
+
+admin.site.register(FeaturedProduct, FeaturedProductAdmin)
+
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name',)  # Hiển thị tên danh mục
-    search_fields = ('name',)  # Tìm kiếm theo tên
+    list_display = ('name',)
+    search_fields = ('name',)
 
-# Admin cho Slide
 class SlideAdmin(admin.ModelAdmin):
-    list_display = ('title', 'subtitle', 'button_text', 'button_link')  # Các cột hiển thị
-    search_fields = ('title', 'subtitle')  # Tìm kiếm
+    list_display = ('title', 'subtitle', 'image', 'is_active')  # Added 'image' and 'is_active'
+    search_fields = ('title', 'subtitle')
 
-# Admin cho CartItem
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('user', 'product', 'quantity', 'size', 'created_at')  # Các cột hiển thị
-    list_filter = ('user', 'product')  # Lọc
-    date_hierarchy = 'created_at'  # Phân cấp theo thời gian
+    list_display = ('user', 'product', 'quantity', 'size', 'created_at')
+    list_filter = ('user', 'product')
+    date_hierarchy = 'created_at'
 
-# Đăng ký các mô hình với admin
 admin.site.register(Category, CategoryAdmin)
-admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductImage)
 admin.site.register(Slide, SlideAdmin)
 admin.site.register(CartItem, CartItemAdmin)

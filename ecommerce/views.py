@@ -5,7 +5,6 @@ from django.http import JsonResponse, HttpResponse
 from .models import Product, Slide, CartItem, Category,Profile
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-from django.utils.encoding import force_str
 # login
 from .models import RecentlyViewedProduct,Favorite
 from .forms import ProfileUpdateForm
@@ -16,11 +15,25 @@ from .forms import AddressForm
 from django.contrib.auth import login, authenticate
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
+from django.db.models import Q
+import logging
+
+logger = logging.getLogger(__name__)  # Add this line to define the logger
+
 def home(request):
-    products = Product.objects.filter(is_active=True)
-    slides = Slide.objects.all()
-    cart_items_count = CartItem.objects.filter(user=request.user).count() if request.user.is_authenticated else 0
-    context = {'products': products, 'slides': slides, 'cart_items_count': cart_items_count}
+    slides = Slide.objects.filter(is_active=True)  # Ensure only active slides are retrieved
+    categories = Category.objects.filter(is_active=True)  # Add categories if needed
+    featured_products = Product.objects.filter(is_featured=True, is_active=True)  # Add featured products if needed
+    new_arrivals = Product.objects.filter(is_new=True, is_active=True)  # Add new arrivals if needed
+    brands = ["Brand A", "Brand B", "Brand C"]  # Example brands, replace with actual data if available
+
+    context = {
+        'slides': slides,
+        'categories': categories,
+        'featured_products': featured_products,
+        'new_arrivals': new_arrivals,
+        'brands': brands,
+    }
     return render(request, 'app/home.html', context)
 
 def product_detail(request, product_id):
@@ -308,3 +321,10 @@ def login_view(request):
     else:
         form = CustomAuthenticationForm()
     return render(request, 'app/login.html', {'form': form})
+
+# category_detail
+def category_detail(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category, is_active=True)  # Lọc sản phẩm theo danh mục
+
+    return render(request, 'app/category_detail.html', {'category': category, 'products': products})

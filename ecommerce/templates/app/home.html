@@ -2,106 +2,347 @@
 {% load static %}
 {% block content %}
 <div class="container mt-5">
-    <!-- Phần carousel (nếu có) -->
-    <div id="carouselExampleAuto" class="carousel slide" data-bs-ride="carousel" data-bs-touch="false" data-bs-interval="5000">
-        <div class="carousel-inner">
-            {% for slide in slides %}
-                <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.title }}">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h1 class="text-white">{{ slide.title }}</h1>
-                        <h2 class="text-white">{{ slide.subtitle }}</h2>
-                        {% if slide.button_link %}
-                            <a href="{{ slide.button_link }}" class="btn btn-light btn-lg">{{ slide.button_text }}</a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAuto" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAuto" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-
-    <!-- Phần hiển thị sản phẩm -->
-    <div class="category-nav mt-4 text-center">
-        <h3 class="fw-bold">HÀNG BÁN CHẠY</h3>
-        <div class="d-flex justify-content-center gap-3 mt-3">
-            <button class="btn btn-outline-dark btn-rounded category-btn active">QUẦN ÁO</button>
-            <button class="btn btn-outline-dark btn-rounded category-btn">NÓN</button>
-            <button class="btn btn-outline-dark btn-rounded category-btn">GIÀY</button>
-            <button class="btn btn-outline-dark btn-rounded category-btn">TÚI</button>
-        </div>
-    
-        <div class="row row-cols-2 row-cols-md-4 g-3 mt-4">
-            {% for product in products %} 
-            <div class="col">
-                <a href="{% url 'product_detail' product.id %}" class="text-decoration-none product-link" 
-                   data-id="{{ product.id }}" 
-                   data-name="{{ product.name }}" 
-                   data-price="{{ product.price }}" 
-                   data-image="{% if product.image %}{{ product.image.url }}{% else %}/static/images/No_images.png{% endif %}">
-                    <div class="card shadow-sm border-0">
-                        <img src="{% if product.image %}{{ product.image.url }}{% else %}/static/images/No_images.png{% endif %}" 
-                        class="card-img-top" alt="{{ product.name }}">
-                        <div class="card-body">
-                            <h6 class="product-card-title">{{ product.name }}</h6>
-                            <h5 class="text-danger fw-bold">{{ product.price }}đ</h5>
+        <main class="min-h-screen flex flex-col">
+            <!-- Phần carousel (nếu có) -->
+            <div id="carouselExampleAuto" class="carousel slide" data-bs-ride="carousel" data-bs-touch="false" data-bs-interval="5000">
+                <div class="carousel-inner">
+                 {% for slide in slides %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.title }}">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h1 class="text-white">{{ slide.title }}</h1>
+                            <h2 class="text-white">{{ slide.subtitle }}</h2>
+                            {% if slide.cta_link %}
+                                <a href="{{ slide.cta_link }}" class="btn btn-light btn-lg">{{ slide.cta }}</a>
+                            {% endif %}
                         </div>
                     </div>
-                </a>
+                {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAuto" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAuto" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            {% endfor %}
-        </div>
-    </div>    
+
+            <!-- Categories Section -->
+            <section class="py-16 bg-gray-50">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-center mb-10">Danh Mục Sản Phẩm</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {% for category in categories %}
+                        <div class="category-item">
+                            <div class="relative aspect-[3/4]">
+                                <img src="{% get_media_prefix %}{{ category.image }}" alt="{{ category.name }}">
+                                <div class="overlay"></div>
+                            </div>
+                            <h3>{{ category.name }}</h3>
+                            <div class="view-button">
+                                <a href="{% url 'category_detail' category.id %}">
+                                    <button>Xem ngay</button>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+
+        <!-- Featured Products -->
+        <section class="py-16" data-animate>
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-3xl font-bold">Sản Phẩm Nổi Bật</h2>
+                    <a href="#" class="text-primary flex items-center hover:underline">
+                        Xem tất cả <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {% for product in featured_products %}
+                    <div class="group transition-all duration-300 hover:-translate-y-1">
+                        <div class="relative overflow-hidden rounded-lg mb-3">
+                            <!-- Thêm link bao quanh ảnh sản phẩm -->
+                            <a href="{% url 'product_detail' product.id %}" class="text-decoration-none product-link">
+                                <div class="aspect-[3/4] relative">
+                                    <img src="{% get_media_prefix %}{{ product.image }}" alt="{{ product.name }}" 
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </div>
+                            </a>
+                            <!-- Product badges -->
+                            <div class="absolute top-2 left-2 flex flex-col gap-2">
+                                {% if product.is_new %}
+                                    <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Mới</span>
+                                {% endif %}
+                                {% if product.is_sale %}
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">Sale</span>
+                                {% endif %}
+                            </div>
+                            <!-- Quick actions -->
+                            <div class="absolute bottom-0 left-0 right-0 flex justify-center gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 p-3 bg-white bg-opacity-90">
+                                <button class="rounded-full w-10 h-10 p-0 flex items-center justify-center border add-to-cart" data-product-id="{{ product.id }}">
+                                    <i data-lucide="heart" class="h-4 w-4"></i>
+                                </button>
+                                <button class="flex-1 bg-black text-white py-2 rounded-md text-sm add-to-favorites" data-product-id="{{ product.id }}" >
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="font-medium mb-1 group-hover:text-primary transition-colors">{{ product.name }}</h3>
+                        <div class="flex gap-2">
+                            {% if product.sale_price %}
+                                <span class="text-red-500 font-medium">{{ product.display_price }}</span>
+                                <span class="text-gray-400 line-through">{{ product.original_price }}</span>
+                            {% else %}
+                                <span class="font-medium">{{ product.display_price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Promotional Banner -->
+        <section class="py-16 bg-gray-900 text-white" data-animate>
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-6">
+                        <h2 class="text-3xl md:text-4xl font-bold">Bộ Sưu Tập Mới Nhất</h2>
+                        <p class="text-lg text-gray-300">
+                            Khám phá những thiết kế độc quyền từ các thương hiệu hàng đầu thế giới. Nâng tầm phong cách của bạn với
+                            những sản phẩm chất lượng cao.
+                        </p>
+                        <div class="flex gap-4">
+                            <button class="bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-md font-medium">
+                                Khám phá ngay
+                            </button>
+                            <button class="text-white border-white hover:bg-white hover:text-black px-6 py-3 rounded-md font-medium border">
+                                Tìm hiểu thêm
+                            </button>
+                        </div>
+                    </div>
+                    <div class="relative h-[400px]">
+                        <img src="{% static 'images/placeholder.jpg' %}" alt="Bộ sưu tập mới" class="w-full h-full object-cover rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Arrivals -->
+        <section class="py-16" data-animate>
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-3xl font-bold">Hàng Mới Về</h2>
+                    <a href="#" class="text-primary flex items-center hover:underline">
+                        Xem tất cả <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {% for product in new_arrivals %}
+                    <div class="group transition-all duration-300 hover:-translate-y-1">
+                        <div class="relative overflow-hidden rounded-lg mb-3">
+                            <div class="aspect-[3/4] relative">
+                                   <img src="{% get_media_prefix %}{{ product.image }}" alt="{{ category.name }}" 
+                                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            </div>
+                            <!-- Product badges -->
+                            <div class="absolute top-2 left-2 flex flex-col gap-2">
+                                {% if product.is_new %}
+                                    <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Mới</span>
+                                {% endif %}
+                                {% if product.is_sale %}
+                                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">Sale</span>
+                                {% endif %}
+                            </div>
+                            <!-- Quick actions -->
+                            <div class="absolute bottom-0 left-0 right-0 flex justify-center gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 p-3 bg-white bg-opacity-90">
+                                <button class="rounded-full w-10 h-10 p-0 flex items-center justify-center border">
+                                    <i data-lucide="heart" class="h-4 w-4"></i>
+                                </button>
+                                <button class="flex-1 bg-black text-white py-2 rounded-md text-sm">
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                        <h3 class="font-medium mb-1 group-hover:text-primary transition-colors">{{ product.name }}</h3>
+                        <div class="flex gap-2">
+                            {% if product.sale_price %}
+                                <span class="text-red-500 font-medium">{{ product.display_price }}</span>
+                                <span class="text-gray-400 line-through">{{ product.original_price }}</span>
+                            {% else %}
+                                <span class="font-medium">{{ product.display_price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Three Feature Banners -->
+        <section class="py-10 bg-gray-50" data-animate>
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="flex items-center gap-4 p-6 bg-white rounded-lg shadow-sm transition-all duration-300 hover:-translate-y-1">
+                        <div class="text-4xl">🚚</div>
+                        <div>
+                            <h3 class="font-bold">Miễn phí vận chuyển</h3>
+                            <p class="text-gray-600">Cho đơn hàng từ 1.000.000₫</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 p-6 bg-white rounded-lg shadow-sm transition-all duration-300 hover:-translate-y-1">
+                        <div class="text-4xl">🔄</div>
+                        <div>
+                            <h3 class="font-bold">Đổi trả dễ dàng</h3>
+                            <p class="text-gray-600">Trong vòng 30 ngày</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 p-6 bg-white rounded-lg shadow-sm transition-all duration-300 hover:-translate-y-1">
+                        <div class="text-4xl">🔒</div>
+                        <div>
+                            <h3 class="font-bold">Thanh toán an toàn</h3>
+                            <p class="text-gray-600">Bảo mật thông tin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Brands -->
+        <section class="py-16" data-animate>
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-10">Thương Hiệu Nổi Bật</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                    {% for brand in brands %}
+                    <div class="flex items-center justify-center p-6 border rounded-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                        <span class="font-bold text-lg">{{ brand }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Instagram Feed -->
+        <section class="py-16 bg-gray-50" data-animate>
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-4">@acfc_fashion</h2>
+                <p class="text-center text-gray-600 mb-10">Theo dõi chúng tôi trên Instagram</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                    {% for i in "123456" %}
+                    <div class="relative aspect-square overflow-hidden group">
+                        <img src="{% static 'images/slide_3.png' %}" alt="Instagram post" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <button class="bg-white text-black hover:bg-gray-100 px-4 py-2 rounded-md border border-transparent">
+                                Xem
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+    </main>
 </div>
 
-<!-- Thêm JavaScript để xử lý sự kiện click và lưu sản phẩm đã xem -->
+<div class="carousel">
+    <!-- ...existing code... -->
+</div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const productLinks = document.querySelectorAll('.product-link');
+      let currentSlide = 0;
+    const slides = document.querySelectorAll("[data-slide-index]");
+    const slideTexts = document.querySelectorAll("[data-slide-text]");
+    const totalSlides = slides.length;
 
-    // Hàm thêm sản phẩm vào danh sách đã xem
-    function addToRecentlyViewed(product) {
-        let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
-
-        // Kiểm tra xem sản phẩm đã tồn tại trong danh sách chưa
-        const existingProductIndex = recentlyViewed.findIndex(p => p.id === product.id);
-        if (existingProductIndex !== -1) {
-            recentlyViewed.splice(existingProductIndex, 1);
-        }
-
-        // Thêm sản phẩm vào đầu danh sách
-        recentlyViewed.unshift(product);
-
-        // Giới hạn danh sách chỉ lưu tối đa 5 sản phẩm
-        if (recentlyViewed.length > 5) {
-            recentlyViewed = recentlyViewed.slice(0, 5);
-        }
-
-        // Lưu danh sách mới vào localStorage
-        localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    function updateSlides() {
+        slides.forEach((slide, index) => {
+            if (index === currentSlide) {
+                slide.classList.add("opacity-100");
+                slide.classList.remove("opacity-0");
+                slideTexts[index].classList.add("translate-y-0", "opacity-100");
+                slideTexts[index].classList.remove("translate-y-5", "opacity-0");
+            } else {
+                slide.classList.add("opacity-0");
+                slide.classList.remove("opacity-100");
+                slideTexts[index].classList.add("translate-y-5", "opacity-0");
+                slideTexts[index].classList.remove("translate-y-0", "opacity-100");
+            }
+        });
     }
 
-    // Thêm sự kiện click vào từng sản phẩm
-    productLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
-            const product = {
-                id: this.getAttribute('data-id'),
-                name: this.getAttribute('data-name'),
-                price: this.getAttribute('data-price'),
-                image: this.getAttribute('data-image')
-            };
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlides();
+    }
 
-            // Thêm sản phẩm vào danh sách đã xem
-            addToRecentlyViewed(product);
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlides();
+    }
+
+    function setSlide(index) {
+        currentSlide = index;
+        updateSlides();
+    }
+
+    // Chạy slider tự động
+    setInterval(nextSlide, 5000); // Thay đổi slide sau mỗi 5 giây
+
+    // Cập nhật slide ban đầu
+    updateSlides();
+  </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Handle Add to Cart
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.getAttribute('data-product-id');
+                fetch(`/add-to-cart/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
+        });
+
+        // Handle Add to Favorites
+        document.querySelectorAll('.add-to-favorites').forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.getAttribute('data-product-id');
+                fetch(`/add_to_favorites/${productId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
         });
     });
-});
 </script>
+
 {% endblock content %}
